@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DatingSite.API.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DatingSite.API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ValuesController : ControllerBase
@@ -26,6 +28,7 @@ namespace DatingSite.API.Controllers
 
         // GET api/values/5dot
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public IActionResult GetValue(int id)
         {
             var value = _context.Values.FirstOrDefault( x=>x.Id == id);
