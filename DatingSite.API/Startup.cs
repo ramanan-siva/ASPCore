@@ -15,6 +15,10 @@ using DatingSite.API.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Net;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Http;
+using DatingSite.API.Helpers;
 
 namespace DatingSite.API
 {
@@ -58,7 +62,16 @@ namespace DatingSite.API
             }
             else
             {
-                //  app.UseHsts();
+                app.UseExceptionHandler(bld => bld.Run(async contxt =>
+                {
+                    contxt.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                    var error = contxt.Features.Get<IExceptionHandlerFeature>();
+                    if (error != null)
+                    {
+                        contxt.Response.AddApplicationError(error.Error.Message);
+                        await contxt.Response.WriteAsync(error.Error.Message);
+                    }
+                }));
             }
 
             //    app.UseHttpsRedirection();
